@@ -1,0 +1,6 @@
+*.iml
+.idea/
+**/target/
+*/src/main/webapp/
+logs
+.mvn/
