@@ -41,6 +41,7 @@ secure:
       - /users/send
       - /users/user/checkPhone
       - /users/user/register
+      - /seckill/add
 
 # 配置 Eureka Server 注册中心
 eureka:
