@@ -31,9 +31,9 @@ client:
     grant_types:
       - password
       - refresh_token
-    # token 有效时间，单位秒
-    token-validity-time: 3600
-    refresh-token-validity-time: 3600
+    # token 有效时间，单位秒  (方便测试调大失效时间为30天)
+    token-validity-time: 2592000
+    refresh-token-validity-time: 2592000
     # 客户端访问范围
     scopes:
       - api
