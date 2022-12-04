@@ -8,15 +8,15 @@ import lombok.Setter;
 import java.io.Serializable;
 
 /**
- * 用户（食客）信息
+ * 用户信息
  *
  * @Author zjq
  * @Date 2022/10/12
  */
 @Getter
 @Setter
-@ApiModel(value = "SignInDinerInfo", description = "登录用户信息")
-public class SignInDinerInfo implements Serializable {
+@ApiModel(value = "SignInUserInfo", description = "登录用户信息")
+public class SignInUserInfo implements Serializable {
 
     @ApiModelProperty("主键")
     private Integer id;

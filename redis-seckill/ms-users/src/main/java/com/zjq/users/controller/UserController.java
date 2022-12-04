@@ -1,15 +1,10 @@
 package com.zjq.users.controller;
 
 import com.zjq.commons.model.domain.ResultInfo;
-import com.zjq.commons.model.domain.SignInIdentity;
 import com.zjq.commons.model.dto.UserDTO;
-import com.zjq.commons.model.vo.SignInDinerInfo;
 import com.zjq.commons.utils.ResultInfoUtil;
 import com.zjq.users.service.UserService;
-import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;

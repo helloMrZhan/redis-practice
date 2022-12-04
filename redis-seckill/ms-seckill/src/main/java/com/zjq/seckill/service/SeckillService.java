@@ -8,7 +8,7 @@ import com.zjq.commons.exception.ParameterException;
 import com.zjq.commons.model.domain.ResultInfo;
 import com.zjq.commons.model.pojo.SeckillVouchers;
 import com.zjq.commons.model.pojo.VoucherOrders;
-import com.zjq.commons.model.vo.SignInDinerInfo;
+import com.zjq.commons.model.vo.SignInUserInfo;
 import com.zjq.commons.utils.AssertUtil;
 import com.zjq.commons.utils.ResultInfoUtil;
 import com.zjq.seckill.mapper.SeckillVouchersMapper;
@@ -127,8 +127,8 @@ public class SeckillService {
             return resultInfo;
         }
         // 这里的data是一个LinkedHashMap，SignInDinerInfo
-        SignInDinerInfo dinerInfo = BeanUtil.fillBeanWithMap((LinkedHashMap) resultInfo.getData(),
-                new SignInDinerInfo(), false);
+        SignInUserInfo dinerInfo = BeanUtil.fillBeanWithMap((LinkedHashMap) resultInfo.getData(),
+                new SignInUserInfo(), false);
         // 判断登录用户是否已抢到(一个用户针对这次活动只能买一次)
         // 注释传统数据库判定方式
 //        VoucherOrders order = voucherOrdersMapper.findDinerOrder(dinerInfo.getId(),

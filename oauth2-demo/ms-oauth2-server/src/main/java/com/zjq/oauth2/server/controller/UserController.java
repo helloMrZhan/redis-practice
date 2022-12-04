@@ -2,7 +2,7 @@ package com.zjq.oauth2.server.controller;
 
 import com.zjq.commons.model.domain.ResultInfo;
 import com.zjq.commons.model.domain.SignInIdentity;
-import com.zjq.commons.model.vo.SignInDinerInfo;
+import com.zjq.commons.model.vo.SignInUserInfo;
 import com.zjq.commons.utils.ResultInfoUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -38,7 +38,7 @@ public class UserController {
         // 获取登录用户的信息，然后设置
         SignInIdentity signInIdentity = (SignInIdentity) authentication.getPrincipal();
         // 转为前端可用的视图对象
-        SignInDinerInfo dinerInfo = new SignInDinerInfo();
+        SignInUserInfo dinerInfo = new SignInUserInfo();
         BeanUtils.copyProperties(signInIdentity, dinerInfo);
         return ResultInfoUtil.buildSuccess(request.getServletPath(), dinerInfo);
     }
