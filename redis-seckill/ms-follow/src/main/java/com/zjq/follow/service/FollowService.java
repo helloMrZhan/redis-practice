@@ -1,11 +1,13 @@
 package com.zjq.follow.service;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.util.StrUtil;
 import com.zjq.commons.constant.ApiConstant;
 import com.zjq.commons.constant.RedisKeyConstant;
 import com.zjq.commons.exception.ParameterException;
 import com.zjq.commons.model.domain.ResultInfo;
 import com.zjq.commons.model.pojo.Follow;
+import com.zjq.commons.model.vo.ShortUserInfo;
 import com.zjq.commons.model.vo.SignInUserInfo;
 import com.zjq.commons.utils.AssertUtil;
 import com.zjq.commons.utils.ResultInfoUtil;
@@ -13,10 +15,15 @@ import com.zjq.follow.mapper.FollowMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * 关注/取关业务逻辑层
@@ -52,17 +59,17 @@ public class FollowService {
         AssertUtil.isTrue(followUserId == null || followUserId < 1,
                 "请选择要关注的人");
         // 获取登录用户信息 (封装方法)
-        SignInUserInfo dinerInfo = loadSignInDinerInfo(accessToken);
+        SignInUserInfo userInfo = loadSignInuserInfo(accessToken);
         // 获取当前登录用户与需要关注用户的关注信息
-        Follow follow = followMapper.selectFollow(dinerInfo.getId(), followUserId);
+        Follow follow = followMapper.selectFollow(userInfo.getId(), followUserId);
 
         // 如果没有关注信息，且要进行关注操作 -- 添加关注
         if (follow == null && isFollowed == 1) {
             // 添加关注信息
-            int count = followMapper.save(dinerInfo.getId(), followUserId);
+            int count = followMapper.save(userInfo.getId(), followUserId);
             // 添加关注列表到 Redis
             if (count == 1) {
-                addToRedisSet(dinerInfo.getId(), followUserId);
+                addToRedisSet(userInfo.getId(), followUserId);
             }
             return ResultInfoUtil.build(ApiConstant.SUCCESS_CODE,
                     "关注成功", path, "关注成功");
@@ -74,7 +81,7 @@ public class FollowService {
             int count = followMapper.update(follow.getId(), isFollowed);
             // 移除 Redis 关注列表
             if (count == 1) {
-                removeFromRedisSet(dinerInfo.getId(), followUserId);
+                removeFromRedisSet(userInfo.getId(), followUserId);
             }
             return ResultInfoUtil.build(ApiConstant.SUCCESS_CODE,
                     "成功取关", path, "成功取关");
@@ -86,7 +93,7 @@ public class FollowService {
             int count = followMapper.update(follow.getId(), isFollowed);
             // 添加关注列表到 Redis
             if (count == 1) {
-                addToRedisSet(dinerInfo.getId(), followUserId);
+                addToRedisSet(userInfo.getId(), followUserId);
             }
             return ResultInfoUtil.build(ApiConstant.SUCCESS_CODE,
                     "关注成功", path, "关注成功");
@@ -98,23 +105,23 @@ public class FollowService {
     /**
      * 添加关注列表到 Redis
      *
-     * @param dinerId
+     * @param userId
      * @param followUserId
      */
-    private void addToRedisSet(Integer dinerId, Integer followUserId) {
-        redisTemplate.opsForSet().add(RedisKeyConstant.following.getKey() + dinerId, followUserId);
-        redisTemplate.opsForSet().add(RedisKeyConstant.followers.getKey() + followUserId, dinerId);
+    private void addToRedisSet(Integer userId, Integer followUserId) {
+        redisTemplate.opsForSet().add(RedisKeyConstant.following.getKey() + userId, followUserId);
+        redisTemplate.opsForSet().add(RedisKeyConstant.followers.getKey() + followUserId, userId);
     }
 
     /**
      * 移除 Redis 关注列表
      *
-     * @param dinerId
+     * @param userId
      * @param followUserId
      */
-    private void removeFromRedisSet(Integer dinerId, Integer followUserId) {
-        redisTemplate.opsForSet().remove(RedisKeyConstant.following.getKey() + dinerId, followUserId);
-        redisTemplate.opsForSet().remove(RedisKeyConstant.followers.getKey() + followUserId, dinerId);
+    private void removeFromRedisSet(Integer userId, Integer followUserId) {
+        redisTemplate.opsForSet().remove(RedisKeyConstant.following.getKey() + userId, followUserId);
+        redisTemplate.opsForSet().remove(RedisKeyConstant.followers.getKey() + followUserId, userId);
     }
 
     /**
@@ -123,7 +130,7 @@ public class FollowService {
      * @param accessToken
      * @return
      */
-    private SignInUserInfo loadSignInDinerInfo(String accessToken) {
+    private SignInUserInfo loadSignInuserInfo(String accessToken) {
         // 必须登录
         AssertUtil.mustLogin(accessToken);
         String url = oauthServerName + "user/me?access_token={accessToken}";
@@ -131,9 +138,51 @@ public class FollowService {
         if (resultInfo.getCode() != ApiConstant.SUCCESS_CODE) {
             throw new ParameterException(resultInfo.getMessage());
         }
-        SignInUserInfo dinerInfo = BeanUtil.fillBeanWithMap((LinkedHashMap) resultInfo.getData(),
+        SignInUserInfo userInfo = BeanUtil.fillBeanWithMap((LinkedHashMap) resultInfo.getData(),
                 new SignInUserInfo(), false);
-        return dinerInfo;
+        return userInfo;
     }
+
+    /**
+     * 共同关注列表
+     *
+     * @param userId
+     * @param accessToken
+     * @param path
+     * @return
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public ResultInfo findCommonsFriends(Integer userId, String accessToken, String path) {
+        // 是否选择了查看对象
+        AssertUtil.isTrue(userId == null || userId < 1,
+                "请选择要查看的人");
+        // 获取登录用户信息
+        SignInUserInfo userInfo = loadSignInuserInfo(accessToken);
+        // 获取登录用户的关注信息
+        String loginuserKey = RedisKeyConstant.following.getKey() + userInfo.getId();
+        // 获取登录用户查看对象的关注信息
+        String userKey = RedisKeyConstant.following.getKey() + userId;
+        // 计算交集
+        Set<Integer> userIds = redisTemplate.opsForSet().intersect(loginuserKey, userKey);
+        // 没有
+        if (userIds == null || userIds.isEmpty()) {
+            return ResultInfoUtil.buildSuccess(path, new ArrayList<ShortUserInfo>());
+        }
+        // 调用食客服务根据 ids 查询食客信息
+        ResultInfo resultInfo = restTemplate.getForObject(usersServerName + "user/findByIds?access_token={accessToken}&ids={ids}",
+                ResultInfo.class, accessToken, StrUtil.join(",", userIds));
+        if (resultInfo.getCode() != ApiConstant.SUCCESS_CODE) {
+            resultInfo.setPath(path);
+            return resultInfo;
+        }
+        // 处理结果集
+        List<LinkedHashMap> dinnerInfoMaps = (ArrayList) resultInfo.getData();
+        List<ShortUserInfo> userInfos = dinnerInfoMaps.stream()
+                .map(user -> BeanUtil.fillBeanWithMap(user, new ShortUserInfo(), true))
+                .collect(Collectors.toList());
+
+        return ResultInfoUtil.buildSuccess(path, userInfos);
+    }
+
 
 }

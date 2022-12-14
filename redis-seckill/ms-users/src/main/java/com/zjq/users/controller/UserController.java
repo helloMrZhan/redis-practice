@@ -2,6 +2,7 @@ package com.zjq.users.controller;
 
 import com.zjq.commons.model.domain.ResultInfo;
 import com.zjq.commons.model.dto.UserDTO;
+import com.zjq.commons.model.vo.ShortUserInfo;
 import com.zjq.commons.utils.ResultInfoUtil;
 import com.zjq.users.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * 用户中心
@@ -60,6 +62,18 @@ public class UserController {
     @PostMapping("register")
     public ResultInfo register(@RequestBody UserDTO userDTO) {
         return userService.register(userDTO, request.getServletPath());
+    }
+
+    /**
+     * 根据 ids 查询用户信息
+     *
+     * @param ids
+     * @return
+     */
+    @GetMapping("findByIds")
+    public ResultInfo<List<ShortUserInfo>> findByIds(String ids) {
+        List<ShortUserInfo> dinerInfos = userService.findByIds(ids);
+        return ResultInfoUtil.buildSuccess(request.getServletPath(), dinerInfos);
     }
 
 }

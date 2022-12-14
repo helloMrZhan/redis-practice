@@ -37,4 +37,17 @@ public class FollowController {
         return resultInfo;
     }
 
+    /**
+     * 共同关注列表
+     *
+     * @param userId
+     * @param access_token
+     * @return
+     */
+    @GetMapping("commons/{userId}")
+    public ResultInfo findCommonsFriends(@PathVariable Integer userId,
+                                         String access_token) {
+        return followService.findCommonsFriends(userId, access_token, request.getServletPath());
+    }
+
 }

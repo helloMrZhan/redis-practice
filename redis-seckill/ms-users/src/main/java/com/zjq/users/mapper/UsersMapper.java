@@ -2,9 +2,12 @@ package com.zjq.oauth2.server.mapper;
 
 import com.zjq.commons.model.dto.UserDTO;
 import com.zjq.commons.model.pojo.Users;
+import com.zjq.commons.model.vo.ShortUserInfo;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+
+import java.util.List;
 
 /**
  * 用户 Mapper
@@ -54,5 +57,19 @@ public interface UsersMapper {
             " t_users (username, password, phone, roles, is_valid, create_date, update_date) " +
             " values (#{username}, #{password}, #{phone}, \"ROLE_USER\", 1, now(), now())")
     int saveUser(UserDTO userDTO);
+
+    /**
+     * 根据 ID 集合查询多个食客信息
+     * @param ids
+     * @return
+     */
+    @Select("<script> " +
+            " select id, nickname, avatar_url from t_diners " +
+            " where is_valid = 1 and id in " +
+            " <foreach item=\"id\" collection=\"ids\" open=\"(\" separator=\",\" close=\")\"> " +
+            "   #{id} " +
+            " </foreach> " +
+            " </script>")
+    List<ShortUserInfo> findByIds(@Param("ids") String[] ids);
 
 }

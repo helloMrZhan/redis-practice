@@ -7,6 +7,7 @@ import com.zjq.commons.model.domain.ResultInfo;
 import com.zjq.commons.model.domain.SignInIdentity;
 import com.zjq.commons.model.dto.UserDTO;
 import com.zjq.commons.model.pojo.Users;
+import com.zjq.commons.model.vo.ShortUserInfo;
 import com.zjq.commons.utils.AssertUtil;
 import com.zjq.commons.utils.ResultInfoUtil;
 import com.zjq.oauth2.server.mapper.UsersMapper;
@@ -27,6 +28,7 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 /**
  * 登录校验
@@ -149,6 +151,19 @@ public class UserService implements UserDetailsService {
         Users users = usersMapper.selectByPhone(phone);
         AssertUtil.isTrue(users == null, "该手机号未注册");
         AssertUtil.isTrue(users.getIsValid() == 0, "该用户已锁定，请先解锁");
+    }
+
+    /**
+     * 根据 ids 查询食客信息
+     *
+     * @param ids 主键 id，多个以逗号分隔，逗号之间不用空格
+     * @return
+     */
+    public List<ShortUserInfo> findByIds(String ids) {
+        AssertUtil.isNotEmpty(ids);
+        String[] idArr = ids.split(",");
+        List<ShortUserInfo> dinerInfos = usersMapper.findByIds(idArr);
+        return dinerInfos;
     }
 
 }
