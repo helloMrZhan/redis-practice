@@ -16,6 +16,7 @@
         <module>ms-users</module>
         <module>ms-seckill</module>
         <module>ms-follow</module>
+        <module>ms-feeds</module>
     </modules>
 
     <!-- 可以集中定义依赖资源的版本信息 -->

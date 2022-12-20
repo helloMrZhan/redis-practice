@@ -2,6 +2,7 @@ package com.zjq.follow.controller;
 
 
 import com.zjq.commons.model.domain.ResultInfo;
+import com.zjq.commons.utils.ResultInfoUtil;
 import com.zjq.follow.service.FollowService;
 import org.springframework.web.bind.annotation.*;
 
@@ -48,6 +49,18 @@ public class FollowController {
     public ResultInfo findCommonsFriends(@PathVariable Integer userId,
                                          String access_token) {
         return followService.findCommonsFriends(userId, access_token, request.getServletPath());
+    }
+
+    /**
+     * 获取粉丝列表
+     *
+     * @param userId
+     * @return
+     */
+    @GetMapping("followers/{userId}")
+    public ResultInfo findFollowers(@PathVariable Integer userId) {
+        return ResultInfoUtil.buildSuccess(request.getServletPath(),
+                followService.findFollowers(userId));
     }
 
 }

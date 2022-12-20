@@ -13,7 +13,9 @@ public enum RedisKeyConstant {
     seckill_vouchers("seckill_vouchers:", "秒杀券的key"),
     lock_key("lockby:", "分布式锁的key"),
     following("following:", "关注集合Key"),
-    followers("followers:", "粉丝集合key");
+    followers("followers:", "粉丝集合key"),
+    following_feeds("following_feeds:", "我关注的好友的FeedsKey"),
+    ;
 
     private String key;
     private String desc;

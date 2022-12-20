@@ -38,6 +38,13 @@ spring:
             - Path=/follow/**
           filters:
             - StripPrefix=1
+        # Feed服务路由
+        - id: ms-feeds
+          uri: lb://ms-feeds
+          predicates:
+            - Path=/feeds/**
+          filters:
+            - StripPrefix=1
 
 secure:
   ignore:

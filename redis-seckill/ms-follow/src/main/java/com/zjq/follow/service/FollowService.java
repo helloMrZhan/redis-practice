@@ -14,8 +14,13 @@ import com.zjq.commons.utils.ResultInfoUtil;
 import com.zjq.follow.mapper.FollowMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
@@ -36,6 +41,8 @@ public class FollowService {
     private String oauthServerName;
     @Value("${service.name.ms-users-server}")
     private String usersServerName;
+    @Value("${service.name.ms-feeds-server}")
+    private String feedsServerName;
     @Resource
     private RestTemplate restTemplate;
     @Resource
@@ -47,7 +54,7 @@ public class FollowService {
     /**
      * 关注/取关
      *
-     * @param followUserId 关注的食客ID
+     * @param followUserId 关注的用户ID
      * @param isFollowed    是否关注 1=关注 0=取关
      * @param accessToken   登录用户token
      * @param path          访问地址
@@ -70,6 +77,8 @@ public class FollowService {
             // 添加关注列表到 Redis
             if (count == 1) {
                 addToRedisSet(userInfo.getId(), followUserId);
+                // 保存 Feed
+                sendSaveOrRemoveFeed(followUserId, accessToken, 1);
             }
             return ResultInfoUtil.build(ApiConstant.SUCCESS_CODE,
                     "关注成功", path, "关注成功");
@@ -82,6 +91,8 @@ public class FollowService {
             // 移除 Redis 关注列表
             if (count == 1) {
                 removeFromRedisSet(userInfo.getId(), followUserId);
+                // 移除 Feed
+                sendSaveOrRemoveFeed(followUserId, accessToken, 0);
             }
             return ResultInfoUtil.build(ApiConstant.SUCCESS_CODE,
                     "成功取关", path, "成功取关");
@@ -94,6 +105,8 @@ public class FollowService {
             // 添加关注列表到 Redis
             if (count == 1) {
                 addToRedisSet(userInfo.getId(), followUserId);
+                // 保存 Feed
+                sendSaveOrRemoveFeed(followUserId, accessToken, 1);
             }
             return ResultInfoUtil.build(ApiConstant.SUCCESS_CODE,
                     "关注成功", path, "关注成功");
@@ -168,7 +181,7 @@ public class FollowService {
         if (userIds == null || userIds.isEmpty()) {
             return ResultInfoUtil.buildSuccess(path, new ArrayList<ShortUserInfo>());
         }
-        // 调用食客服务根据 ids 查询食客信息
+        // 调用用户服务根据 ids 查询用户信息
         ResultInfo resultInfo = restTemplate.getForObject(usersServerName + "user/findByIds?access_token={accessToken}&ids={ids}",
                 ResultInfo.class, accessToken, StrUtil.join(",", userIds));
         if (resultInfo.getCode() != ApiConstant.SUCCESS_CODE) {
@@ -184,5 +197,37 @@ public class FollowService {
         return ResultInfoUtil.buildSuccess(path, userInfos);
     }
 
+    /**
+     * 获取粉丝列表
+     *
+     * @param userId
+     * @return
+     */
+    public Set<Integer> findFollowers(Integer userId) {
+        AssertUtil.isNotNull(userId, "请选择要查看的用户");
+        Set<Integer> followers = redisTemplate.opsForSet()
+                .members(RedisKeyConstant.followers.getKey() + userId);
+        return followers;
+    }
+
+    /**
+     * 发送请求添加或者移除关注人的Feed列表
+     *
+     * @param followUserId 关注好友的ID
+     * @param accessToken   当前登录用户token
+     * @param type          0=取关 1=关注
+     */
+    private void sendSaveOrRemoveFeed(Integer followUserId, String accessToken, int type) {
+        String feedsUpdateUrl = feedsServerName + "updateFollowingFeeds/"
+                + followUserId + "?access_token=" + accessToken;
+        // 构建请求头
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        // 构建请求体（请求参数）
+        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+        body.add("type", type);
+        HttpEntity<MultiValueMap<String, Object>> entity = new HttpEntity<>(body, headers);
+        restTemplate.postForEntity(feedsUpdateUrl, entity, ResultInfo.class);
+    }
 
 }

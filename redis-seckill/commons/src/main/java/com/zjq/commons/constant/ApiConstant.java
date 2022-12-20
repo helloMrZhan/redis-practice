@@ -19,4 +19,7 @@ public class ApiConstant {
     public static final String NO_LOGIN_MESSAGE = "Please login.";
     // 错误提示信息
     public static final String ERROR_MESSAGE = "Oops! Something was wrong.";
+
+    // Feed 默认每页条数
+    public static final int PAGE_SIZE = 6;
 }
