@@ -45,6 +45,7 @@ eureka:
 service:
   name:
     ms-oauth-server: http://ms-oauth2-server/
+    ms-points-server: http://ms-points/
 
 # Mybatis
 mybatis:
