@@ -152,7 +152,7 @@ public class SeckillService {
             if (isLocked) {
                 // 下单
                 VoucherOrders voucherOrders = new VoucherOrders();
-                voucherOrders.setFkDinerId(dinerInfo.getId());
+                voucherOrders.setFkuserId(dinerInfo.getId());
                 //redis中不需要维护该外键信息
             //        voucherOrders.setFkSeckillId(seckillVouchers.getId());
                 voucherOrders.setFkVoucherId(seckillVouchers.getFkVoucherId());

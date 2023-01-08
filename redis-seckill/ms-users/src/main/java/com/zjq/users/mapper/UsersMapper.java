@@ -59,7 +59,7 @@ public interface UsersMapper {
     int saveUser(UserDTO userDTO);
 
     /**
-     * 根据 ID 集合查询多个食客信息
+     * 根据 ID 集合查询多个用户信息
      * @param ids
      * @return
      */

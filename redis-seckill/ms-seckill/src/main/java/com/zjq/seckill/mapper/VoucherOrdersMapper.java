@@ -31,7 +31,7 @@ public interface VoucherOrdersMapper {
      */
     @Insert("insert into t_voucher_orders (order_no, fk_voucher_id, fk_diner_id, " +
             " status, fk_seckill_id, order_type, create_date, update_date,  is_valid)" +
-            " values (#{orderNo}, #{fkVoucherId}, #{fkDinerId}, #{status}, #{fkSeckillId}, " +
+            " values (#{orderNo}, #{fkVoucherId}, #{fkuserId}, #{status}, #{fkSeckillId}, " +
             " #{orderType}, now(), now(), 1)")
     int save(VoucherOrders voucherOrders);
 

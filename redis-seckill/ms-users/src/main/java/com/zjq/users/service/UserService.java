@@ -154,7 +154,7 @@ public class UserService implements UserDetailsService {
     }
 
     /**
-     * 根据 ids 查询食客信息
+     * 根据 ids 查询用户信息
      *
      * @param ids 主键 id，多个以逗号分隔，逗号之间不用空格
      * @return

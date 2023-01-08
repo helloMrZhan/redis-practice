@@ -22,7 +22,7 @@ public class VoucherOrders extends BaseModel {
     @ApiModelProperty("代金券")
     private Integer fkVoucherId;
     @ApiModelProperty("下单用户")
-    private Integer fkDinerId;
+    private Integer fkuserId;
     @ApiModelProperty("生成qrcode")
     private String qrcode;
     @ApiModelProperty("支付方式 0=微信支付 1=支付宝")

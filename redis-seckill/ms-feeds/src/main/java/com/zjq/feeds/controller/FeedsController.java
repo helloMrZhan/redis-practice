@@ -42,10 +42,10 @@ public class FeedsController {
      *
      * @return
      */
-    @PostMapping("updateFollowingFeeds/{followingDinerId}")
-    public ResultInfo addFollowingFeeds(@PathVariable Integer followingDinerId,
+    @PostMapping("updateFollowingFeeds/{followinguserId}")
+    public ResultInfo addFollowingFeeds(@PathVariable Integer followinguserId,
                                         String access_token, @RequestParam int type) {
-        feedsService.addFollowingFeed(followingDinerId, access_token, type);
+        feedsService.addFollowingFeed(followinguserId, access_token, type);
         return ResultInfoUtil.buildSuccess(request.getServletPath(), "操作成功");
     }
 

@@ -41,10 +41,11 @@ eureka:
     service-url:
       defaultZone: http://localhost:7000/eureka/
 
-# oauth2 服务地址
 service:
   name:
+    # oauth2 服务地址
     ms-oauth-server: http://ms-oauth2-server/
+    # 积分服务地址
     ms-points-server: http://ms-points/
 
 # Mybatis
