@@ -64,7 +64,7 @@ public interface UsersMapper {
      * @return
      */
     @Select("<script> " +
-            " select id, nickname, avatar_url from t_diners " +
+            " select id, nickname, avatar_url from t_users " +
             " where is_valid = 1 and id in " +
             " <foreach item=\"id\" collection=\"ids\" open=\"(\" separator=\",\" close=\")\"> " +
             "   #{id} " +
