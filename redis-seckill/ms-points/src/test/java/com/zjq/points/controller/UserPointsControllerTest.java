@@ -16,7 +16,7 @@ class UserPointsControllerTest extends PointsApplicationTests {
     // 初始化 2W 条积分记录
     @Test
     void addPoints() throws Exception {
-        List<Map<Integer, Integer[]>> dinerInfos = Lists.newArrayList();
+        List<Map<Integer, Integer[]>> userInfos = Lists.newArrayList();
         for (int i = 1; i <= 2000; i++) {
             for (int j = 0; j < 10; j++) {
                 super.mockMvc.perform(MockMvcRequestBuilders.post("/")

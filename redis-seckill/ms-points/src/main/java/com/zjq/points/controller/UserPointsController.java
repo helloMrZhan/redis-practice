@@ -49,7 +49,7 @@ public class UserPointsController {
      * @return
      */
     @GetMapping("redis")
-    public ResultInfo findDinerPointsRankFromRedis(String access_token) {
+    public ResultInfo findUserPointsRankFromRedis(String access_token) {
         List<UserPointsRankVO> ranks = userPointsService.findUserPointRankFromRedis(access_token);
         return ResultInfoUtil.buildSuccess(request.getServletPath(), ranks);
     }
@@ -61,8 +61,8 @@ public class UserPointsController {
      * @return
      */
     @GetMapping
-    public ResultInfo findDinerPointsRank(String access_token) {
-        List<UserPointsRankVO> ranks = userPointsService.findDinerPointRank(access_token);
+    public ResultInfo findUserPointsRank(String access_token) {
+        List<UserPointsRankVO> ranks = userPointsService.findUserPointRank(access_token);
         return ResultInfoUtil.buildSuccess(request.getServletPath(), ranks);
     }
 

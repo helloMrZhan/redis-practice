@@ -119,14 +119,14 @@ public class UserPointsService {
         if (resultInfo.getCode() != ApiConstant.SUCCESS_CODE) {
             throw new ParameterException(resultInfo.getCode(), resultInfo.getMessage());
         }
-        List<LinkedHashMap> dinerInfoMaps = (List<LinkedHashMap>) resultInfo.getData();
+        List<LinkedHashMap> userInfoMaps = (List<LinkedHashMap>) resultInfo.getData();
         // 完善用户昵称和头像
-        for (LinkedHashMap dinerInfoMap : dinerInfoMaps) {
-            ShortUserInfo shortDinerInfo = BeanUtil.fillBeanWithMap(dinerInfoMap,
+        for (LinkedHashMap userInfoMap : userInfoMaps) {
+            ShortUserInfo shortUserInfo = BeanUtil.fillBeanWithMap(userInfoMap,
                     new ShortUserInfo(), false);
-            UserPointsRankVO rankVO = ranksMap.get(shortDinerInfo.getId());
-            rankVO.setNickname(shortDinerInfo.getNickname());
-            rankVO.setAvatarUrl(shortDinerInfo.getAvatarUrl());
+            UserPointsRankVO rankVO = ranksMap.get(shortUserInfo.getId());
+            rankVO.setNickname(shortUserInfo.getNickname());
+            rankVO.setAvatarUrl(shortUserInfo.getAvatarUrl());
         }
 
         // 判断个人是否在 ranks 中，如果在，添加标记直接返回
@@ -160,7 +160,7 @@ public class UserPointsService {
      * @param accessToken
      * @return
      */
-    public List<UserPointsRankVO> findDinerPointRank(String accessToken) {
+    public List<UserPointsRankVO> findUserPointRank(String accessToken) {
         // 获取登录用户信息
         SignInUserInfo SignInUserInfo = loadSignInUserInfo(accessToken);
         // 统计积分排行榜
@@ -200,12 +200,12 @@ public class UserPointsService {
         if (resultInfo.getCode() != ApiConstant.SUCCESS_CODE) {
             throw new ParameterException(resultInfo.getCode(), resultInfo.getMessage());
         }
-        SignInUserInfo dinerInfo = BeanUtil.fillBeanWithMap((LinkedHashMap) resultInfo.getData(),
+        SignInUserInfo userInfo = BeanUtil.fillBeanWithMap((LinkedHashMap) resultInfo.getData(),
                 new SignInUserInfo(), false);
-        if (dinerInfo == null) {
+        if (userInfo == null) {
             throw new ParameterException(ApiConstant.NO_LOGIN_CODE, ApiConstant.NO_LOGIN_MESSAGE);
         }
-        return dinerInfo;
+        return userInfo;
     }
 
 }
