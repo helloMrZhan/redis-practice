@@ -97,15 +97,15 @@ public class UserService implements UserDetailsService {
             resultInfo.setData(resultInfo.getMessage());
             return resultInfo;
         }
-        // 这里的 Data 是一个 LinkedHashMap 转成了域对象 OAuthDinerInfo
-        OAuthUserInfo dinerInfo = BeanUtil.fillBeanWithMap((LinkedHashMap) resultInfo.getData(),
+        // 这里的 Data 是一个 LinkedHashMap 转成了域对象 OAuthUserInfo
+        OAuthUserInfo userInfo = BeanUtil.fillBeanWithMap((LinkedHashMap) resultInfo.getData(),
                 new OAuthUserInfo(), false);
         // 根据业务需求返回视图对象
-        LoginUserInfo loginDinerInfo = new LoginUserInfo();
-        loginDinerInfo.setToken(dinerInfo.getAccessToken());
-        loginDinerInfo.setAvatarUrl(dinerInfo.getAvatarUrl());
-        loginDinerInfo.setNickname(dinerInfo.getNickname());
-        return ResultInfoUtil.buildSuccess(path, loginDinerInfo);
+        LoginUserInfo loginUserInfo = new LoginUserInfo();
+        loginUserInfo.setToken(userInfo.getAccessToken());
+        loginUserInfo.setAvatarUrl(userInfo.getAvatarUrl());
+        loginUserInfo.setNickname(userInfo.getNickname());
+        return ResultInfoUtil.buildSuccess(path, loginUserInfo);
     }
 
 
@@ -162,8 +162,8 @@ public class UserService implements UserDetailsService {
     public List<ShortUserInfo> findByIds(String ids) {
         AssertUtil.isNotEmpty(ids);
         String[] idArr = ids.split(",");
-        List<ShortUserInfo> dinerInfos = usersMapper.findByIds(idArr);
-        return dinerInfos;
+        List<ShortUserInfo> userInfos = usersMapper.findByIds(idArr);
+        return userInfos;
     }
 
 }

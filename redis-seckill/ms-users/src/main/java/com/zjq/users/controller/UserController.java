@@ -72,8 +72,8 @@ public class UserController {
      */
     @GetMapping("findByIds")
     public ResultInfo<List<ShortUserInfo>> findByIds(String ids) {
-        List<ShortUserInfo> dinerInfos = userService.findByIds(ids);
-        return ResultInfoUtil.buildSuccess(request.getServletPath(), dinerInfos);
+        List<ShortUserInfo> userInfos = userService.findByIds(ids);
+        return ResultInfoUtil.buildSuccess(request.getServletPath(), userInfos);
     }
 
 }
