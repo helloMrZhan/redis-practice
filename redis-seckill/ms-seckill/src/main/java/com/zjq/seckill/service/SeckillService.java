@@ -126,18 +126,18 @@ public class SeckillService {
             resultInfo.setPath(path);
             return resultInfo;
         }
-        // 这里的data是一个LinkedHashMap，SignInDinerInfo
-        SignInUserInfo dinerInfo = BeanUtil.fillBeanWithMap((LinkedHashMap) resultInfo.getData(),
+        // 这里的data是一个LinkedHashMap，SignInUserInfo
+        SignInUserInfo userInfo = BeanUtil.fillBeanWithMap((LinkedHashMap) resultInfo.getData(),
                 new SignInUserInfo(), false);
         // 判断登录用户是否已抢到(一个用户针对这次活动只能买一次)
         // 注释传统数据库判定方式
-//        VoucherOrders order = voucherOrdersMapper.findDinerOrder(dinerInfo.getId(),
+//        VoucherOrders order = voucherOrdersMapper.findUserOrder(userInfo.getId(),
 //                seckillVouchers.getId());
 //        AssertUtil.isTrue(order != null, "该用户已抢到该代金券，无需再抢");
 
         // 使用 Redis 锁一个账号只能购买一次
         String lockName = RedisKeyConstant.lock_key.getKey()
-                + dinerInfo.getId() + ":" + voucherId;
+                + userInfo.getId() + ":" + voucherId;
         long expireTime = seckillVouchers.getEndTime().getTime() - now.getTime();
 
         // Redisson 分布式锁
@@ -152,7 +152,7 @@ public class SeckillService {
             if (isLocked) {
                 // 下单
                 VoucherOrders voucherOrders = new VoucherOrders();
-                voucherOrders.setFkuserId(dinerInfo.getId());
+                voucherOrders.setFkuserId(userInfo.getId());
                 //redis中不需要维护该外键信息
             //        voucherOrders.setFkSeckillId(seckillVouchers.getId());
                 voucherOrders.setFkVoucherId(seckillVouchers.getFkVoucherId());

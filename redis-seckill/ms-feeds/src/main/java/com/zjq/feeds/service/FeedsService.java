@@ -89,9 +89,9 @@ public class FeedsService {
         Map<Integer, ShortUserInfo> userInfos = userInfoMaps.stream()
                 .collect(Collectors.toMap(
                         // key
-                        diner -> (Integer) diner.get("id"),
+                        user -> (Integer) user.get("id"),
                         // value
-                        diner -> BeanUtil.fillBeanWithMap(diner, new ShortUserInfo(), true)
+                        user -> BeanUtil.fillBeanWithMap(user, new ShortUserInfo(), true)
                 ));
         // 循环 VO 集合，根据用户 ID 从 Map 中获取用户信息并设置至 VO 对象
         feedsVOS.forEach(feedsVO -> {

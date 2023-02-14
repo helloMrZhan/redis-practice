@@ -16,6 +16,8 @@ public enum RedisKeyConstant {
     followers("followers:", "粉丝集合key"),
     following_feeds("following_feeds:", "我关注的好友的FeedsKey"),
     user_points("user:points", "用户的积分Key"),
+    user_location("user:location", "用户地理位置Key"),
+    restaurants("restaurants:", "餐厅的Key"),
     ;
 
     private String key;

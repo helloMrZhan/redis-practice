@@ -38,9 +38,9 @@ public class UserController {
         // 获取登录用户的信息，然后设置
         SignInIdentity signInIdentity = (SignInIdentity) authentication.getPrincipal();
         // 转为前端可用的视图对象
-        SignInUserInfo dinerInfo = new SignInUserInfo();
-        BeanUtils.copyProperties(signInIdentity, dinerInfo);
-        return ResultInfoUtil.buildSuccess(request.getServletPath(), dinerInfo);
+        SignInUserInfo userInfo = new SignInUserInfo();
+        BeanUtils.copyProperties(signInIdentity, userInfo);
+        return ResultInfoUtil.buildSuccess(request.getServletPath(), userInfo);
     }
 
     /**

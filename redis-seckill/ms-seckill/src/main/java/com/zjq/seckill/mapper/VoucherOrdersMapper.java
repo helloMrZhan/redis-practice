@@ -17,11 +17,11 @@ public interface VoucherOrdersMapper {
      * @param voucherId
      * @return
      */
-    @Select("select id, order_no, fk_voucher_id, fk_diner_id, qrcode, payment," +
+    @Select("select id, order_no, fk_voucher_id, fk_user_id, qrcode, payment," +
             " status, fk_seckill_id, order_type, create_date, update_date, " +
-            " is_valid from t_voucher_orders where fk_diner_id = #{userId} " +
+            " is_valid from t_voucher_orders where fk_user_id = #{userId} " +
             " and fk_voucher_id = #{voucherId} and is_valid = 1 and status between 0 and 1 ")
-    VoucherOrders findDinerOrder(@Param("userId") Integer userId,
+    VoucherOrders findUserOrder(@Param("userId") Integer userId,
                                  @Param("voucherId") Integer voucherId);
 
     /**
@@ -29,7 +29,7 @@ public interface VoucherOrdersMapper {
      * @param voucherOrders 代金券实体
      * @return
      */
-    @Insert("insert into t_voucher_orders (order_no, fk_voucher_id, fk_diner_id, " +
+    @Insert("insert into t_voucher_orders (order_no, fk_voucher_id, fk_user_id, " +
             " status, fk_seckill_id, order_type, create_date, update_date,  is_valid)" +
             " values (#{orderNo}, #{fkVoucherId}, #{fkuserId}, #{status}, #{fkSeckillId}, " +
             " #{orderType}, now(), now(), 1)")
