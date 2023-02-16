@@ -8,6 +8,7 @@ import java.util.List;
 
 /**
  * 网关白名单配置
+ * @author zjq
  */
 @Data
 @Component
